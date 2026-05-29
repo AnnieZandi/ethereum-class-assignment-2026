@@ -147,10 +147,10 @@ contract OrderBook {
     }
 
     function isOpen(uint256 orderId) external view returns (bool) {
-        return orders[orderId].isOpen;
+        return orders[orderId].isOpen; // Check if the order is still open (not fully filled or canceled)
     }
 
     function remaining(uint256 orderId) external view returns (uint256) {
-        return orders[orderId].remaining;
+        return orders[orderId].remaining; // Get the remaining amount of the order that has not been filled
     }
 }

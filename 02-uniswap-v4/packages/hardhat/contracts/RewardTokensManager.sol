@@ -20,7 +20,7 @@ contract RewardTokensManager is Ownable {
     using StateLibrary for IPoolManager;
     using CurrencyLibrary for Currency;
 
-    // ── Constants ────────────────────────────────────────────────────────────
+    //  Constants
     /// @notice 0.3% fee tier — standard Uniswap fee for moderate-volatility pairs
     uint24 public constant FEE_TIER = 3000;
     /// @notice Tick spacing paired with the 0.3% fee tier
@@ -28,7 +28,7 @@ contract RewardTokensManager is Ownable {
     /// @notice No hooks for this assignment
     address public constant HOOKS = address(0);
 
-    // ── Immutables ────────────────────────────────────────────────────────────
+    //  Immutables
     IPoolManager public immutable poolManager;
     IPositionManager public immutable positionManager;
     IERC20 public immutable pnpToken;
@@ -36,14 +36,14 @@ contract RewardTokensManager is Ownable {
     /// @notice Permit2 address retrieved from the PositionManager at deploy time
     address public immutable permit2Address;
 
-    // ── State ─────────────────────────────────────────────────────────────────
+    //  State
     /// @notice Tracks which poolIds have been created through this contract
     mapping(bytes32 => bool) public createdPools;
 
     PoolKey private _poolKey;
     bool private _poolCreated;
 
-    // ── Events ────────────────────────────────────────────────────────────────
+    // Events
     /// @notice Emitted when a new Uniswap v4 pool is initialised
     event PoolCreated(
         bytes32 indexed poolId,
@@ -65,12 +65,12 @@ contract RewardTokensManager is Ownable {
         uint128 liquidity
     );
 
-    // ── Errors ────────────────────────────────────────────────────────────────
+    // Errors
     error PoolNotCreated();
     error TickRangeDoesNotCoverAssignmentPrice();
     error ZeroLiquidity();
 
-    // ── Constructor ───────────────────────────────────────────────────────────
+    // Constructor initialises the contract with references to the PoolManager, PositionManager, and token contracts. It also retrieves the Permit2 address from the PositionManager for later use in liquidity operations.
     constructor(
         address _poolManager,
         address _positionManager,
@@ -89,7 +89,7 @@ contract RewardTokensManager is Ownable {
         permit2Address = ok && data.length == 32 ? abi.decode(data, (address)) : address(0);
     }
 
-    // ── View helpers ──────────────────────────────────────────────────────────
+    //  View helpers
 
     /// @notice Returns the canonical (sorted) currency pair for the pool
     function getCanonicalCurrencies() public view returns (address currency0, address currency1) {
@@ -118,7 +118,7 @@ contract RewardTokensManager is Ownable {
         }
     }
 
-    // ── Pool creation ─────────────────────────────────────────────────────────
+    //  Pool creation
 
     /// @notice Creates and initialises a Uniswap v4 pool for PNPT/FNBT.
     /// @dev    onlyOwner restricts pool creation to the deployer to prevent
@@ -151,7 +151,7 @@ contract RewardTokensManager is Ownable {
         emit PoolCreated(poolId, token0, token1, FEE_TIER, TICK_SPACING, HOOKS, sqrtPriceX96);
     }
 
-    // ── Liquidity minting ─────────────────────────────────────────────────────
+    //  Liquidity minting
 
     /// @notice Mints a concentrated liquidity position in the PNPT/FNBT pool.
     /// @param tickLower      Lower bound of the tick range (aligned to TICK_SPACING)
